@@ -1,0 +1,31 @@
+.sobreContainer {
+margin-left: 220px;
+padding: 40px;
+background-color: #0d1b2a;
+min-height: 100vh;
+box-sizing: border-box;
+color: #ffffff;
+}
+
+.ula {
+  list-style-position: outside;
+}
+
+.ulb {
+  list-style-position: inside;
+}
+
+.dt {
+  font-weight: bold;
+  color: #d15319;
+}
+
+h2 {
+  color: #f5a623;
+  margin-bottom: 10px;
+}
+
+h1 {
+  color: #f5a623;
+  margin-bottom: 20px;
+}
