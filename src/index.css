@@ -282,6 +282,7 @@ main {
   opacity: 0.5;
 }
 
+
 .tarefa.concluida .texto-tarefa {
   text-decoration: line-through;
   color: #94a3b8;
@@ -492,4 +493,7 @@ footer {
   font-weight: bold;
   cursor: pointer;           
   transition: background 0.2s ease;
+}
+.colunafazer{
+  color: rgb(238, 1, 1)
 }

@@ -129,7 +129,7 @@ function Kanban() {
             
             <div className='minikanban'>
                 <div className="coluna">
-                    <h3>A Fazer</h3>
+                    <h3 >A Fazer</h3>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <span className='kanban-contador'>
                             {tarefas.filter(t => t.coluna === 'afazer').length}

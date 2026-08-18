@@ -14,7 +14,7 @@ function Sidebar() {
        <div className={styles.logo}> <h1>TaskFlow</h1> </div>
       <nav className={styles.nav}>
 
-        <NavLink to='/' className={linkClass}>Dashboard</NavLink>
+        
         {logado && <NavLink to='/' className={linkClass}>Dashboard</NavLink>}
 
         <NavLink to='/sobre' className={linkClass}>Sobre</NavLink>
