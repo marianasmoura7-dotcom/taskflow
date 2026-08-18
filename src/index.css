@@ -345,6 +345,9 @@ main {
 #cont-total {
   color: #94A3B8;
 }
+@media(max-whidth: 800px){
+  
+}
 
 #cont-pendentes {
   color: #F5A623;
