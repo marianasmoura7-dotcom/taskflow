@@ -1,9 +1,11 @@
 .sidebar {
-  width: 220px;
+  /* width: 35px; */
+  /* height: 35px; */
   min-height: 100vh;
   background-color: #1F1F1F ;
   padding: 24px 16px;
-  position: fixed;
+  position: absolute;
+  /* z-index: 999; */
   top: 0;
   left: 0;
   display: flex;
@@ -24,11 +26,22 @@
 /* Container do Menu */
 .nav {
   display: flex;
+  /* width: 35px; */
+  /* height: 5px;  */
+  margin-bottom: 10px; 
   flex-direction: column;
   gap: 8px;
-  flex: 1; /* Empurra o botão de sair para o final */
-}
+  flex: 1; 
+  /* margin-left: -300px;  */
 
+}
+/* .material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+} */
 
 .nav a {
   color: #a0aec0;

@@ -23,6 +23,14 @@ function Login() {
     setShake(true);
     setTimeout(() => setShake(false), 500);
   }
+  // function Logado() {
+  
+  //   <div className='login-container'>
+  //     <h1 className='login-logo'>TaskFlow</h1>
+  //     <p className='login-subtitulo'>Voce já está Logado</p>
+  //   </div>
+  // }
+
   return (
     <div className='login-container'>
       <div className={`login-card ${shake ? 'shake' : ''} `}>
@@ -50,6 +58,7 @@ function Login() {
           Este login é apenas para fins didáticos.
           Credenciais reais vêm no módulo back-end.
         </p>
+
       </div>
     </div>
 

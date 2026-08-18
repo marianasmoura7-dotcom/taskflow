@@ -6,6 +6,7 @@ import Sobre from ".//pages/sobre";
 import Login from "./pages/login";
 import Sidebar from "./components/sidebar";
 // import { useState } from "react";
+import Perfil from ".//pages/perfil"
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path='/' element={ <RotaPrivada> <Kanban/> </RotaPrivada> } />
           <Route path="/sobre" element={<Sobre />} />
           <Route path="/login" element={<Login/>} />
+          <Route path="/perfil" element={<Perfil />} />
           <Route path="/*" element={<h1>Página não encontrada</h1>} />
         </Routes>
       </main>
