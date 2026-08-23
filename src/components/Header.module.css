@@ -1,5 +1,5 @@
 header {
-  background-color: #091625;
+  background-color: #09090B;
   border-bottom: 1px solid #1E3A5F;
   padding: 20px 0;
   position: sticky;
@@ -37,7 +37,7 @@ header .container {
 .badge-baixa   { background-color: rgba(34, 197, 94, 0.15); color: #22C55E; } */
 
 .logo h1 {
-  color: #23f52e;
+  color: #eff1ef;
   font-size: 1.6rem;
   font-weight: 700;
   line-height: 1.2;

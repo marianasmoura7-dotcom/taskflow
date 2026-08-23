@@ -7,7 +7,7 @@
 
 /* ── 2. BASE ──────────────────────────────────────────────── */
 body {
-  background-color: #0d1b2a;
+  background-color: #09090B;
   color: white;
   font-family: "Inter", Arial, sans-serif;
   font-size: 16px;
@@ -391,7 +391,7 @@ footer {
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 12px;
   flex: 1;
-  background-color: #122853;
+  background-color: #353536;
   padding: 16px;
   border-radius: 8px;
 }
