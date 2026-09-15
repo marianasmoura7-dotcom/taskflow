@@ -4,16 +4,17 @@ import './login.css';
 import { useAuth } from '../contexts/AuthContext';
 
 function Login() {
-  const { login } = useAuth();
+  const {token} = useAuth();
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
   const [shake, setShake] = useState(false);
+  
   //função comum em código de programação usada para gerenciar o processo de entrada de um usuário em sistemas web ou aplicativos
   function handleLogin() {
     if (usuario === 'admin' && senha === '1234') {
-      login(); // atualiza o estado no App.jsx
+      token; // atualiza o estado no App.jsx
       navigate('/');
       alert('seja bem-vindo ao TaskFlow!') // redireciona — chamado APÓS a ação
       return; // apenas para fins didáticos
@@ -23,6 +24,7 @@ function Login() {
     setShake(true);
     setTimeout(() => setShake(false), 500);
   }
+
   // function Logado() {
   
   //   <div className='login-container'>

@@ -7,12 +7,12 @@ import {useAuth} from  '../contexts/AuthContext';
 // (ex: <Dashboard /> passado entre as tags)
 
 function RotaPrivada({children }) {
-const {logado} = useAuth () ; 
+const {token} = useAuth () ; 
     // Usuário não logado → redireciona para /login
     // replace={true}: substitui o histórico para que
     // o botão Voltar não retorne para o Dashboard
 
-    if (!logado) {
+    if (!token) {
 
         return <Navigate to='/login' replace={true} />;
 
