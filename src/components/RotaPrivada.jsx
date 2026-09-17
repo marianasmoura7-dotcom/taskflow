@@ -20,7 +20,7 @@ const {token} = useAuth () ;
 
     // Usuário logado → renderiza o componente filho
 
-    return children;
+    return children; 
 
 }
 
