@@ -1,5 +1,5 @@
 import axios from 'axios';
-const api = axios.create({ baseURL: 'https://bank-end-three.vercel.app' });
+const api = axios.create({ baseURL: import.meta.env.VITE_URL_BASE_API });
 api.interceptors.request.use(config => {
     const token = localStorage.getItem('token');
     if (token)
