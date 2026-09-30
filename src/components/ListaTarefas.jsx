@@ -1,5 +1,5 @@
 import TarefaItem from './TarefaItem';
-function ListaTarefas({ tarefas,onDeletar, onEditar, onMover, colunaAnterior, colunaProxima }) {
+function ListaTarefas({ tarefas,onDeletar, onEditar, onMover, colunaAnterior, colunaProxima, criadoEm }) {
     return (
         <section id='lista-section'>
             {/* mensagem quando nao ha tarefas */}
@@ -22,6 +22,7 @@ function ListaTarefas({ tarefas,onDeletar, onEditar, onMover, colunaAnterior, co
                             onMover={onMover ? (novaColuna) => onMover(tarefa.id, novaColuna, tarefa.texto, tarefa.prioridade):null }
                             colunaAnterior={colunaAnterior}
                             colunaProxima={colunaProxima}
+                            criadoEm={criadoEm ? tarefa.criadoEm : undefined}
 
                         />
                     ))}

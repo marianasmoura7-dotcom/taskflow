@@ -198,6 +198,7 @@ function Kanban() {
                                     onMover={moverTarefa}
                                     colunaAnterior='afazer'
                                     colunaProxima="concluido"
+                                    criadoEm={true}
                                 />
                             </div>
 
