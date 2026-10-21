@@ -18,6 +18,7 @@ function ModalTarefa({
     useEffect(() => {
         // setCep("");
         if (tarefa) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTexto(tarefa.texto);
             setCidade(tarefa.cidade || '');
             setPrioridade(tarefa.prioridade);
@@ -42,16 +43,9 @@ function ModalTarefa({
                 `https://viacep.com.br/ws/${cepDigitado}/json/`
             );
             if (!data.erro) setCidade(data.localidade + '/' + data.uf);
-        } catch (e) { /* ignora erro de CEP silenciosamente */ }
+        } catch { /* ignora erro de CEP silencamente */ }
 
     }
-
-
-    // const adicionarTarefa = async () => {
-    //     if (texto.trim() === "") return;
-    //     if (cep.trim() === "") return;
-
-    //     const cidade = await consultarCidade(cep);
 
         function handleSalvar() {
             if (texto.trim() === '') return;

@@ -3,7 +3,8 @@ import Contador from "../components/Contador";
 import ListaTarefas from "../components/ListaTarefas"; // reutilizado nas colunas
 import { useState, useEffect } from "react";
 import ModalTarefa from "../components/ModalTarefa";
-import api from "../api";
+import api,  { mensagensDeErro } from "../api";
+
 
 // import { data } from "react-router-dom";
 
@@ -16,7 +17,9 @@ function Kanban() {
     const [colunaAtiva, setColunaAtiva] = useState('afazer');
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
-
+    const [listaPrioridades, setListaPrioridades] = useState();
+    const [listaUsuarios, setListaUsuarios] = useState();
+    const [listaProjetos, setListaProjetos] = useState();
 
 
     function abrirModalCriar(coluna) {
@@ -29,34 +32,22 @@ function Kanban() {
         setModalAberto(true);
     }
 
-    async function salvarTarefa(dados) {
-        if (dados.id === undefined) {
-            try {
-                const resposta = await api.post('/tarefas/', dados);
-                setTarefas([...tarefas, resposta.data]);
-            // eslint-disable-next-line no-unused-vars
-            } catch (err) {
-                setErro('Erro ao criar tarefa. Tente novamente.');
-            }
-        } else {
-            try {
-                const resposta = await api.put(`/tarefas/${dados.id}`, dados);
-                setTarefas(tarefas.map(t => t.id === dados.id ? resposta.data : t));
-            // eslint-disable-next-line no-unused-vars
-            } catch (err) {
-                setErro('Erro ao editar tarefa. Tente novamente.');
-            }
-        }
-    }
-
     useEffect(() => {
-        async function carregarTarefas() {
+        async function carregar() {
             try {
                 setCarregando(true);
                 setErro("");
-                const resposta = await api.get('/tarefas/');
 
-                setTarefas(resposta.data);
+                const [respPrioridades, respTarefas, respUsuarios, respProjetos] = await Promise.all([
+                    api.get('/prioridades/'),
+                    api.get('/tarefas/'),
+                    api.get('/usuarios/'),
+                    api.get('/projetos/')
+                ]);
+                setListaPrioridades(respPrioridades.data);
+                setTarefas(respTarefas.data);
+                setListaUsuarios(respUsuarios.data);
+                setListaProjetos(respProjetos.data);
             } catch (e) {
                 setErro('Erro ao carregar tarefas. Verifique a conexão.');
 
@@ -65,7 +56,7 @@ function Kanban() {
                 setCarregando(false);
             }
         }
-        carregarTarefas();
+        carregar();
     }, []);
 
     useEffect(() => {
@@ -85,23 +76,25 @@ function Kanban() {
     }, [tarefas]);
 
 
-    async function deletarTarefa(id) {
-
-        const confirmado = window.confirm(
-            'tem certeza que deseja deletar essa tarefa?'
-        );
-
-        if (!confirmado) {
-            return;
+    async function salvarTarefa(dados) {
+        if (dados.id) {
+            const resposta = await api.put(`/tarefas/${dados.id}`, dados);
+            setTarefas(tarefas.map((t) => (t.id === dados.id ? resposta.data : t)));
+        } else {
+            const resposta = await api.post("/tarefas/", dados);
+            setTarefas([...tarefas, resposta.data]);
+            setErro('Erro ao editar tarefa. Tente novamente.');
         }
+    }
 
+    async function deletarTarefa(id) {
         try {
             await api.delete(`/tarefas/${id}`);
 
             setTarefas(
                 tarefas.filter(t => t.id !== id));
         } catch (err) {
-            setErro('Erro ao deletar  . ');
+            alert(mensagensDeErro(err).join("\n"));
             console.log(err);
         }
 
@@ -109,26 +102,17 @@ function Kanban() {
 
 
 
-    async function moverTarefa(id, novaColuna, texto, prioridade) {
+    async function moverTarefa(id, novaColuna) {
+        const tarefa = tarefas.find((t) => t.id === id);
 
         try {
-
-            const { data: tarefaMovida } = await api.put(
-                `/tarefas/${id}`,
-                {
-                    coluna: novaColuna,
-                    texto: texto,
-                    prioridade: prioridade
-                }
-            );
-
-            setTarefas(tarefas =>
-                tarefas.map(t =>
-                    t.id === id ? tarefaMovida : t
-                )
-            );
+            const resposta = await api.put(`/tarefas/${id}`, {
+                ...tarefa,
+                coluna: novaColuna,
+            });
+            setTarefas(tarefas.map((t) => t.id === id ? resposta.data : t));
         } catch (err) {
-            setErro('Erro ao mover tarefa. Tente novamente.');
+            alert(mensagensDeErro(err).join("\n"));
             console.error(err);
         }
     }
@@ -170,6 +154,7 @@ function Kanban() {
 
                                 <ListaTarefas
                                     tarefas={tarefas.filter((t) => t.coluna === "afazer")}
+                                    prioridade={listaPrioridades}
                                     onDeletar={deletarTarefa}
                                     onEditar={abrirModalEditar}
                                     onMover={moverTarefa}
@@ -193,6 +178,7 @@ function Kanban() {
 
                                 <ListaTarefas
                                     tarefas={tarefas.filter((t) => t.coluna === "andamento")}
+                                    prioridade={listaPrioridades}
                                     onDeletar={deletarTarefa}
                                     onEditar={abrirModalEditar}
                                     onMover={moverTarefa}
@@ -218,6 +204,7 @@ function Kanban() {
 
                                 <ListaTarefas
                                     tarefas={tarefas.filter((t) => t.coluna === "concluido")}
+                                    prioridade={listaPrioridades}
                                     onDeletar={deletarTarefa}
                                     onEditar={abrirModalEditar}
                                     onMover={moverTarefa}
@@ -242,6 +229,9 @@ function Kanban() {
                 onSalvar={salvarTarefa}
                 tarefa={tarefaEditando}
                 coluna={colunaAtiva}
+                prioridades={listaPrioridades}
+                usuarios={listaUsuarios}
+                projetos={listaProjetos}
             />
         </>
 
