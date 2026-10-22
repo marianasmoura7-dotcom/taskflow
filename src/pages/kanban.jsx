@@ -1,9 +1,9 @@
 import Header from "../components/Header";
-import Contador from "../components/Contador";
+// import Contador from "../components/Contador";
 import ListaTarefas from "../components/ListaTarefas"; // reutilizado nas colunas
 import { useState, useEffect } from "react";
 import ModalTarefa from "../components/ModalTarefa";
-import api,  { mensagensDeErro } from "../api";
+import api, { mensagensDeErro } from "../api";
 
 
 // import { data } from "react-router-dom";
@@ -83,11 +83,15 @@ function Kanban() {
         } else {
             const resposta = await api.post("/tarefas/", dados);
             setTarefas([...tarefas, resposta.data]);
-            setErro('Erro ao editar tarefa. Tente novamente.');
+            // setErro('Erro ao editar tarefa. Tente novamente.');
         }
     }
 
     async function deletarTarefa(id) {
+        const confirmou = window.confirm("Deseja realmente deletar essa tarefa?");
+        if (!confirmou) 
+            return;
+        
         try {
             await api.delete(`/tarefas/${id}`);
 
@@ -97,6 +101,7 @@ function Kanban() {
             alert(mensagensDeErro(err).join("\n"));
             console.log(err);
         }
+
 
     };
 
@@ -118,7 +123,7 @@ function Kanban() {
     }
     return (
         <>
-            <Contador />
+        
             <Header
                 titulo="TaskFlow - Versão Brasileira " tarefas={tarefas}
                 subtitulo="Gerencie suas tarefas"
