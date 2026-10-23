@@ -1,9 +1,11 @@
 import Header from "../components/Header";
-import Contador from "../components/Contador";
+// import Contador from "../components/Contador";
 import ListaTarefas from "../components/ListaTarefas"; // reutilizado nas colunas
 import { useState, useEffect } from "react";
 import ModalTarefa from "../components/ModalTarefa";
-import axios from "axios";
+import api, { mensagensDeErro } from "../api";
+
+
 // import { data } from "react-router-dom";
 
 
@@ -15,7 +17,9 @@ function Kanban() {
     const [colunaAtiva, setColunaAtiva] = useState('afazer');
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
-    const URL_API = 'https://6a85ac989c451dc67a63f197.mockapi.io/';
+    const [listaPrioridades, setListaPrioridades] = useState();
+    const [listaUsuarios, setListaUsuarios] = useState();
+    const [listaProjetos, setListaProjetos] = useState();
 
 
     function abrirModalCriar(coluna) {
@@ -28,43 +32,31 @@ function Kanban() {
         setModalAberto(true);
     }
 
-    async function salvarTarefa(dados) {
-        try {
-            if (dados.id !== undefined) {
-                const { data: tarefaEditada } = await axios.put(URL_API + '/tarefas/' + dados.id, {
-                    texto: dados.texto,
-                    prioridade: dados.prioridade,
-                    cidade: dados.cidade,
-                    coluna: dados.coluna,
-                });
-                setTarefas(tarefasAtuais => tarefasAtuais.map(t => t.id === dados.id ? tarefaEditada : t));
-
-            } else {
-                const { data: novaTarefa } = await axios.post(URL_API + '/tarefas/', dados);
-                setTarefas(tarefasAtuais => [...tarefasAtuais, novaTarefa]);
-            }
-        } catch (e) {
-            setErro('Erro ao salvar tarefa. Tente novamente.');
-            console.error(e);
-        }
-    }
-
     useEffect(() => {
-        async function carregarTarefas() {
+        async function carregar() {
             try {
                 setCarregando(true);
                 setErro("");
-                const resposta = await axios.get(URL_API + "/tarefas/");
 
-                setTarefas(resposta.data);
+                const [respPrioridades, respTarefas, respUsuarios, respProjetos] = await Promise.all([
+                    api.get('/prioridades/'),
+                    api.get('/tarefas/'),
+                    api.get('/usuarios/'),
+                    api.get('/projetos/')
+                ]);
+                setListaPrioridades(respPrioridades.data);
+                setTarefas(respTarefas.data);
+                setListaUsuarios(respUsuarios.data);
+                setListaProjetos(respProjetos.data);
             } catch (e) {
                 setErro('Erro ao carregar tarefas. Verifique a conexão.');
+
                 console.log(e);
             } finally {
                 setCarregando(false);
             }
         }
-        carregarTarefas();
+        carregar();
     }, []);
 
     useEffect(() => {
@@ -84,134 +76,153 @@ function Kanban() {
     }, [tarefas]);
 
 
-    async function deletarTarefa(id) {
-
-        // const confirmado = window.confirm(
-        //     'tem certeza que deseja deletar essa tarefa?'
-        // );
-
-        try {
-            await axios.delete(URL_API + '/tarefas/' + id);
-
-            setTarefas(tarefasAtuais =>
-                tarefasAtuais.filter(tarefa => tarefa.id !== id));
-        } catch (e) {
-            setErro('Erro ao deletar  tarefa. Tente novamente.');
-            console.log(e);
+    async function salvarTarefa(dados) {
+        if (dados.id) {
+            const resposta = await api.put(`/tarefas/${dados.id}`, dados);
+            setTarefas(tarefas.map((t) => (t.id === dados.id ? resposta.data : t)));
+        } else {
+            const resposta = await api.post("/tarefas/", dados);
+            setTarefas([...tarefas, resposta.data]);
+            // setErro('Erro ao editar tarefa. Tente novamente.');
         }
+    }
+
+    async function deletarTarefa(id) {
+        const confirmou = window.confirm("Deseja realmente deletar essa tarefa?");
+        if (!confirmou) 
+            return;
+        
+        try {
+            await api.delete(`/tarefas/${id}`);
+
+            setTarefas(
+                tarefas.filter(t => t.id !== id));
+        } catch (err) {
+            alert(mensagensDeErro(err).join("\n"));
+            console.log(err);
+        }
+
 
     };
 
 
 
     async function moverTarefa(id, novaColuna) {
+        const tarefa = tarefas.find((t) => t.id === id);
 
         try {
-            
-            const { data: tarefaMovida } = await axios.put(
-                URL_API + '/tarefas/' + id ,
-                { coluna: novaColuna }
-            );
-            
-            setTarefas(tarefasAtuais =>
-                tarefasAtuais.map(t =>
-                    t.id === id ? tarefaMovida : t
-                )
-            );
-        } catch (e) {
-            setErro('Erro ao mover tarefa. Tente novamente.');
-            console.error(e);
+            const resposta = await api.put(`/tarefas/${id}`, {
+                ...tarefa,
+                coluna: novaColuna,
+            });
+            setTarefas(tarefas.map((t) => t.id === id ? resposta.data : t));
+        } catch (err) {
+            alert(mensagensDeErro(err).join("\n"));
+            console.error(err);
         }
     }
     return (
         <>
-            <Contador />
+        
             <Header
                 titulo="TaskFlow - Versão Brasileira " tarefas={tarefas}
                 subtitulo="Gerencie suas tarefas"
             />
 
             <main className="container">
-                {carregando && (<p style={{ textAlign: 'center', color: '#94A3B8' }}>Carregando tarefas...</p>)}
+
+                {carregando && <svg viewBox="25 25 50 50">''
+                    <circle r="20" cy="50" cx="50"> setTimeout(()  {
+
+                    }, 1000s);</circle>
+                </svg>}
+
                 {erro && (<p style={{ textAlign: 'center', color: '#EF4444' }}>{erro}</p>)}
+                {!carregando && !erro &&
 
-                <section id="formulario">
-                    <div className="container-quadros">
+                    <section id="formulario">
+                        <div className="container-quadros">
 
 
-                        <div className='minikanban'>
-                            <div className="coluna">
-                                <h3 >A Fazer</h3>
-                                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                    <span className='kanban-contador'>
-                                        {tarefas.filter(t => t.coluna === 'afazer').length}
-                                    </span>
-                                    <button className='kanban-btn-add' onClick={() => abrirModalCriar('afazer')}>
-                                        +
-                                    </button>
+                            <div className='minikanban'>
+                                <div className="coluna">
+                                    <h3 >A Fazer</h3>
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <span className='kanban-contador'>
+                                            {tarefas.filter(t => t.coluna === 'afazer').length}
+                                        </span>
+                                        <button className='kanban-btn-add' onClick={() => abrirModalCriar('afazer')}>
+                                            +
+                                        </button>
+                                    </div>
                                 </div>
+
+                                <ListaTarefas
+                                    tarefas={tarefas.filter((t) => t.coluna === "afazer")}
+                                    prioridade={listaPrioridades}
+                                    onDeletar={deletarTarefa}
+                                    onEditar={abrirModalEditar}
+                                    onMover={moverTarefa}
+                                    colunaAnterior={null}
+                                    colunaProxima="andamento"
+                                />
                             </div>
 
-                            <ListaTarefas
-                                tarefas={tarefas.filter((t) => t.coluna === "afazer")}
-                                onDeletar={deletarTarefa}
-                                onEditar={abrirModalEditar}
-                                onMover={moverTarefa}
-                                colunaAnterior={null}
-                                colunaProxima="andamento"
-                            />
-                        </div>
-
-                        <div className='minikanban'>
-                            <div className="coluna">
-                                <h3>Em andamento </h3>
-                                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                    <span className='kanban-contador'>
-                                        {tarefas.filter(t => t.coluna === 'andamento').length}
-                                    </span>
-                                    <button className='kanban-btn-add' onClick={() => abrirModalCriar('andamento')}>
-                                        +
-                                    </button>
+                            <div className='minikanban'>
+                                <div className="coluna">
+                                    <h3>Em andamento </h3>
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <span className='kanban-contador'>
+                                            {tarefas.filter(t => t.coluna === 'andamento').length}
+                                        </span>
+                                        <button className='kanban-btn-add' onClick={() => abrirModalCriar('andamento')}>
+                                            +
+                                        </button>
+                                    </div>
                                 </div>
+
+                                <ListaTarefas
+                                    tarefas={tarefas.filter((t) => t.coluna === "andamento")}
+                                    prioridade={listaPrioridades}
+                                    onDeletar={deletarTarefa}
+                                    onEditar={abrirModalEditar}
+                                    onMover={moverTarefa}
+                                    colunaAnterior='afazer'
+                                    colunaProxima="concluido"
+                                    criadoEm={true}
+                                />
                             </div>
 
-                            <ListaTarefas
-                                tarefas={tarefas.filter((t) => t.coluna === "andamento")}
-                                onDeletar={deletarTarefa}
-                                onEditar={abrirModalEditar}
-                                onMover={moverTarefa}
-                                colunaAnterior='afazer'
-                                colunaProxima="concluido"
-                            />
-                        </div>
 
-
-                        <div className="minikanban">
-                            <div className="coluna">
-                                <h3>Concluido</h3>
-                                <div style={{ display: "flex", gap: '8px', alignItems: 'center' }}>
-                                    <span className="kanban-contador">
-                                        {tarefas.filter(t => t.coluna === "concluido").length}
-                                    </span>
-                                    <button className="kanban-btn-add" onClick={() => abrirModalCriar('concluido')}>
-                                        +
-                                    </button>
+                            <div className="minikanban">
+                                <div className="coluna">
+                                    <h3>Concluido</h3>
+                                    <div style={{ display: "flex", gap: '8px', alignItems: 'center' }}>
+                                        <span className="kanban-contador">
+                                            {tarefas.filter(t => t.coluna === "concluido").length}
+                                        </span>
+                                        <button className="kanban-btn-add" onClick={() => abrirModalCriar('concluido')}>
+                                            +
+                                        </button>
+                                    </div>
                                 </div>
+
+                                <ListaTarefas
+                                    tarefas={tarefas.filter((t) => t.coluna === "concluido")}
+                                    prioridade={listaPrioridades}
+                                    onDeletar={deletarTarefa}
+                                    onEditar={abrirModalEditar}
+                                    onMover={moverTarefa}
+                                    colunaAnterior='andamento'
+                                    colunaProxima={null}
+                                />
                             </div>
 
-                            <ListaTarefas
-                                tarefas={tarefas.filter((t) => t.coluna === "concluido")}
-                                onDeletar={deletarTarefa}
-                                onEditar={abrirModalEditar}
-                                onMover={moverTarefa}
-                                colunaAnterior='andamento'
-                                colunaProxima={null}
-                            />
                         </div>
-
-                    </div>
-                </section>
+                    </section>
+                }
             </main >
+
 
 
             <footer>
@@ -223,6 +234,9 @@ function Kanban() {
                 onSalvar={salvarTarefa}
                 tarefa={tarefaEditando}
                 coluna={colunaAtiva}
+                prioridades={listaPrioridades}
+                usuarios={listaUsuarios}
+                projetos={listaProjetos}
             />
         </>
 
