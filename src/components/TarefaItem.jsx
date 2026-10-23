@@ -12,12 +12,12 @@ function TarefaItem({ texto,
   usuario = null,
   projeto = null, }) {
 
-  const classeItem = (concluida ? styles.tarefa + ' ' + styles.concluida : styles.tarefa) + ' ' + styles[prioridade];
+  const classeItem = (concluida ? styles.tarefa + ' ' + styles.concluida : styles.tarefa) + ' ' ;
   const estiloCor = corPrioridade ? { "--cor-prioridade": corPrioridade } : undefined;
   const classeTexto = concluida ? styles.textoTarefa + " " + styles["texto-tarefa"] : styles.textoTarefa;
   const modoKanban = onMover !== null;
   return (
-    <li className={classeItem} style={estiloCor}>
+    <ul className={classeItem} style={estiloCor}>
       <span className={classeTexto} onDoubleClick={onEditar}>{texto}</span>
       {(usuario || projeto) && (
         <div className={styles.info}>
@@ -62,7 +62,7 @@ function TarefaItem({ texto,
           <button className={styles.btnDeletar} onClick={onDeletar}>X </button>
         </div>
       </div>
-    </li>
+    </ul>
   );
 }
 export default TarefaItem;
