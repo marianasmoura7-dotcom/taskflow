@@ -1,8 +1,7 @@
 import TarefaItem from './TarefaItem';
-function ListaTarefas({ tarefas,onDeletar, onEditar, onMover, colunaAnterior, colunaProxima, criadoEm }) {
+function ListaTarefas({ tarefas, onDeletar, onEditar, onMover, colunaAnterior, colunaProxima }) {
     return (
         <section id='lista-section'>
-            {/* mensagem quando nao ha tarefas */}
             {tarefas.length === 0 && (
                 <p className='msg-vazia' > Nenhuma tarefa aqui ainda.
                 </p>
@@ -14,15 +13,19 @@ function ListaTarefas({ tarefas,onDeletar, onEditar, onMover, colunaAnterior, co
                         <TarefaItem
                             key={tarefa.id}
                             texto={tarefa.texto}
+                            rotuloPrioridade={tarefa.prioridade}
+                            corPrioridade={tarefa.prioridade_cor}
                             concluida={tarefa.concluida}
                             prioridade={tarefa.prioridade}
+                            usuario={tarefa.usuario || 'Sem responsável'}
+                            projeto={tarefa.projeto || 'Sem projeto'}
                             onEditar={onEditar ? () => onEditar(tarefa) : undefined}
-                            onDeletar={() => onDeletar (tarefa.id)}
+                            onDeletar={() => onDeletar(tarefa.id)}
                             cidade={tarefa.cidade}
-                            onMover={onMover ? (novaColuna) => onMover(tarefa.id, novaColuna, tarefa.texto, tarefa.prioridade):null }
+                            onMover={onMover ? (novaColuna) => onMover(tarefa.id, novaColuna) : null}
                             colunaAnterior={colunaAnterior}
                             colunaProxima={colunaProxima}
-                            criadoEm={criadoEm ? tarefa.criadoEm : undefined}
+
 
                         />
                     ))}

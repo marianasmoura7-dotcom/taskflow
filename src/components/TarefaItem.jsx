@@ -1,30 +1,68 @@
 import styles from './TarefaItem.module.css';
 
-function TarefaItem({ texto, cidade, concluida = false, prioridade = 'media', onDeletar,onEditar, onMover, colunaAnterior, colunaProxima, }) {
-  // Classe do li muda conforme o estado concluida
+function TarefaItem({ texto,
+  concluida = false,
+  rotuloPrioridade = "",
+  corPrioridade = null,
+  onDeletar,
+  onEditar,
+  onMover = null,
+  colunaAnterior = null,
+  colunaProxima = null,
+  usuario = null,
+  projeto = null, }) {
+
   const classeItem = (concluida ? styles.tarefa + ' ' + styles.concluida : styles.tarefa) + ' ' + styles[prioridade];
-
-  // Classe do texto tambem muda
-  // const classeTexto = concluida ? styles.textotarefa + ' ' + styles['texto-tarefa'] : styles.textotarefa;
-
-  const classePrioridade = styles['badge-prioridade'] + ' ' + styles['badge-' + prioridade];
-
+  const estiloCor = corPrioridade ? { "--cor-prioridade": corPrioridade } : undefined;
+  const classeTexto = concluida ? styles.textoTarefa + " " + styles["texto-tarefa"] : styles.textoTarefa;
+  const modoKanban = onMover !== null;
   return (
-    <li className={classeItem}>
-      <span onDoubleClick={onEditar}>{texto}</span>
-      <span className={classePrioridade}> {prioridade} </span>
-      <button className={styles.btnDeletar} onClick={onDeletar}>X </button>
-      {cidade && cidade !== '-' && (
-        <span className={styles['badge-cidade']}> {cidade}</span>
+    <li className={classeItem} style={estiloCor}>
+      <span className={classeTexto} onDoubleClick={onEditar}>{texto}</span>
+      {(usuario || projeto) && (
+        <div className={styles.info}>
+          {usuario && (
+            <span className={styles.infoItem}>
+              <span className={styles.infoRotulo}>Responsável</span>
+              {usuario}
+            </span>
+          )}
+          {projeto && (
+            <span className={styles.infoItem}>
+              <span className={styles.infoRotulo}>Projeto</span>
+              {projeto}
+            </span>
+          )}
+        </div>
       )}
-      {colunaAnterior && (<button className={styles.btnMover} onClick={() => onMover(colunaAnterior)}>  ←  </button>)}
-      {colunaProxima && (<button className={styles.btnMover} onClick={() => onMover(colunaProxima)}>  →  </button>)}
 
-      {/* <button className={styles.btnMover} onClick={() => onMover (colunaAnterior)}>  ←  </button>  
-       <button className={styles.btnMover} onClick={() => onMover (colunaProxima)}>  →  </button>
-     */}
+      <div className={styles.rodape}>
+        <span className={styles["badge-prioridade"]}>{rotuloPrioridade || "Sem prioridade"}</span>
+        <div className={styles.acoes}>
+          {modoKanban && colunaAnterior && (
+            <button
+              className={styles.btnMover}
+              onClick={() => onMover(colunaAnterior)}
+              title="Mover para coluna anterior"
+            >
+              ←
+            </button>
+          )}
+
+          {modoKanban && colunaProxima && (
+            <button
+              className={styles.btnMover}
+              onClick={() => onMover(colunaProxima)}
+              title="Mover para próxima coluna"
+            >
+              →
+            </button>
+          )}
+
+          <button className={styles.btnDeletar} onClick={onDeletar}>X </button>
+        </div>
+      </div>
     </li>
   );
 }
-
 export default TarefaItem;
