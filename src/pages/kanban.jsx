@@ -58,7 +58,6 @@ function Kanban() {
         }
         carregar();
     }, []);
-
     useEffect(() => {
         const pendentes = tarefas.filter(
             (t) => t.coluna === 'afazer'

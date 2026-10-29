@@ -66,9 +66,6 @@ function ModalTarefa({
             setSalvando(false);
         }
     }
-
-
-
     useEffect(() => {
         if (!aberto) return;
         function handleEsc(e) {

@@ -219,6 +219,8 @@ main {
   white-space: nowrap;
 }
 
+
+
 #btn-adicionar:hover {
   background-color: #d4900f;
   box-shadow: 0 4px 14px rgba(245, 166, 35, 0.4);
