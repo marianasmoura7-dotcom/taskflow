@@ -39,8 +39,8 @@ function Kanban() {
                 setErro("");
 
                 const [respPrioridades, respTarefas, respUsuarios, respProjetos] = await Promise.all([
-                    api.get('/prioridades/'),
                     api.get('/tarefas/'),
+                    api.get('/prioridades/'),
                     api.get('/usuarios/'),
                     api.get('/projetos/')
                 ]);
@@ -88,9 +88,9 @@ function Kanban() {
 
     async function deletarTarefa(id) {
         const confirmou = window.confirm("Deseja realmente deletar essa tarefa?");
-        if (!confirmou) 
+        if (!confirmou)
             return;
-        
+
         try {
             await api.delete(`/tarefas/${id}`);
 
@@ -122,7 +122,7 @@ function Kanban() {
     }
     return (
         <>
-        
+
             <Header
                 titulo="TaskFlow - Versão Brasileira " tarefas={tarefas}
                 subtitulo="Gerencie suas tarefas"

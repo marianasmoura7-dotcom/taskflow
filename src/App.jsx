@@ -5,7 +5,6 @@ import RotaPrivada from './components/RotaPrivada';
 import Sobre from ".//pages/sobre";
 import Login from "./pages/login";
 import Sidebar from "./components/sidebar";
-// import { useState } from "react";
 import Perfil from ".//pages/perfil"
 
 function App() {

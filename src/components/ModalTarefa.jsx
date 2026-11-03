@@ -125,9 +125,9 @@ function ModalTarefa({
                         value={idPrioridade}
                         onChange={(e) => setIdPrioridade(e.target.value)}
                     >
-                        {prioridades.map((p) => (
-                            <option key={p.id} value={p.id}>
-                                {p.descricao}
+                        {prioridades.map((pr) => (
+                            <option key={pr.id} value={pr.id}>
+                                {pr.descricao}
                             </option>
                         ))}
                     </select>
