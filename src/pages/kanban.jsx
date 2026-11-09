@@ -39,8 +39,8 @@ function Kanban() {
                 setErro("");
 
                 const [respPrioridades, respTarefas, respUsuarios, respProjetos] = await Promise.all([
-                    api.get('/tarefas/'),
                     api.get('/prioridades/'),
+                    api.get('/tarefas/'),
                     api.get('/usuarios/'),
                     api.get('/projetos/')
                 ]);

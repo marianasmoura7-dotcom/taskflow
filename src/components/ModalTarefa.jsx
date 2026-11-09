@@ -39,7 +39,7 @@ function ModalTarefa({
             setIdUsuario(usuario?.id || usuarios[0]?.id || "");
             setIdProjeto(projetos[0]?.id || "");
         }
-    }, [tarefa, aberto]);
+    }, [tarefa, aberto, usuarios , projetos, usuario]);
 
     useEffect(() => {
 
@@ -127,7 +127,7 @@ function ModalTarefa({
                     >
                         {prioridades.map((pr) => (
                             <option key={pr.id} value={pr.id}>
-                                {pr.descricao}
+                                {pr.descricao || pr.prioridade}
                             </option>
                         ))}
                     </select>
